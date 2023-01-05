@@ -1,9 +1,31 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Page Analyzer - Urls
+    Page Analyzer - Sites
 {% endblock %}
 
 {% block main %}
-    Urls
+<h1>Sites</h1>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Last check</th>
+    <!--            <th>Response code</th>-->
+            </tr>
+            {% if urls %}
+                {% for url in data %}
+                <tr>
+                    <td>{{ url.id }}</td>
+                    <td><a href="{{ url_for('url', id=url.id) }}">{{ url.name }}</a></td>
+                    <td>{{ url.created }}</td>
+        <!--            <td>{{ post.response }}</td>-->
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

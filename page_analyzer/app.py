@@ -12,7 +12,11 @@ def index():
 
 @app.route('/urls')
 def urls_get():
-    return render_template('urls.html')
+    data = {}
+    return render_template(
+        'urls.html',
+        data=data
+    )
 
 
 @app.route('/urls/<int:id>')
