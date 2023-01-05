@@ -2,15 +2,16 @@
 name = "hexlet-code"
 version = "0.1.0"
 description = ""
-authors = ["Andrey Ivanov <veny.xd@gmail.com>"]
+authors = ["Andrey Ivanov <ivnv.xd@gmail.com>"]
 readme = "README.md"
 packages = [{include = "page_analyzer"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.1"
 Flask = "^2.2.2"
 gunicorn = "^20.1.0"
 python-dotenv = "^0.21.0"
+psycopg2-binary = "^2.9.5"
 
 
 [tool.poetry.group.dev.dependencies]
