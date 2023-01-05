@@ -1,9 +1,27 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Page Analyzer - Url: {{ id }}
+    Page Analyzer - {{ url.name }}
 {% endblock %}
 
 {% block main %}
-    Url: {{ id }}
+<h1>Site: {{ url.name }}</h1>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover text-nowrap" data-test="url">
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>{{ url.id }}</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{ url.name }}</td>
+            </tr>
+            <tr>
+                <td>Creation date</td>
+                <td>{{ url.created_at }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 {% endblock %}

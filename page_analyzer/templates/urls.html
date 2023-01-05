@@ -13,15 +13,13 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Last check</th>
-    <!--            <th>Response code</th>-->
             </tr>
             {% if urls %}
-                {% for url in data %}
+                {% for url in urls %}
                 <tr>
                     <td>{{ url.id }}</td>
-                    <td><a href="{{ url_for('url', id=url.id) }}">{{ url.name }}</a></td>
-                    <td>{{ url.created }}</td>
-        <!--            <td>{{ post.response }}</td>-->
+                    <td><a href="{{ url_for('url_show', id=url.id) }}">{{ url.name }}</a></td>
+                    <td>{{ url.created_at }}</td>
                 </tr>
                 {% endfor %}
             {% endif %}
