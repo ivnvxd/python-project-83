@@ -14,4 +14,4 @@ Analyze specified pages for SEO suitability
 
 </div>
 
-[Demo](python-project-83-production-c5d0.up.railway.app)
+[Demo](https://python-project-83-production-c5d0.up.railway.app/)
