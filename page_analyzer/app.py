@@ -123,11 +123,11 @@ def url_show(id):
 
 def validate_url(url):
     if len(url) == 0:
-        return {'url': url, 'error': 'zero'}
+        error = 'zero'
     elif len(url) > 255:
-        return {'url': url, 'error': 'length'}
+        error = 'length'
     elif not validators.url(url):
-        return {'url': url, 'error': 'invalid'}
+        error = 'invalid'
     else:
         parsed_url = urlparse(url)
         norm_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
@@ -143,9 +143,12 @@ def validate_url(url):
         conn.close()
 
         if found:
-            return {'url': norm_url, 'error': 'exists'}
+            error = 'exists'
         else:
-            return {'url': norm_url, 'error': None}
+            url = norm_url
+            error = None
+
+    return {'url': url, 'error': error}
 
 
 if __name__ == '__main__':
