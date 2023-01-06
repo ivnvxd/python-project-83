@@ -61,13 +61,13 @@ def urls_post():
 
             q_select = 'SELECT id FROM urls WHERE name=(%s)'
             cur.execute(q_select, [url])
-            id = cur.fetchone()[0]
+            id_ = cur.fetchone()[0]
 
             cur.close()
             conn.close()
 
             flash('Страница уже существует', 'alert-info')
-            return redirect(url_for('url_show', id=id))
+            return redirect(url_for('url_show', id=id_))
         else:
             flash('Некорректный URL', 'alert-danger')
 
@@ -89,7 +89,7 @@ def urls_post():
 
         q_select = 'SELECT id FROM urls WHERE name=(%s)'
         cur.execute(q_select, [url])
-        id = cur.fetchone()[0]
+        id_ = cur.fetchone()[0]
 
         conn.commit()
 
@@ -99,7 +99,7 @@ def urls_post():
         flash('Страница успешно добавлена', 'alert-success')
         return redirect(url_for(
             'url_show',
-            id=id
+            id=id_
         ))
 
 
@@ -122,6 +122,8 @@ def url_show(id):
 
 
 def validate_url(url):
+    error = None
+
     if len(url) == 0:
         error = 'zero'
     elif len(url) > 255:
@@ -144,9 +146,8 @@ def validate_url(url):
 
         if found:
             error = 'exists'
-        else:
-            url = norm_url
-            error = None
+
+        url = norm_url
 
     return {'url': url, 'error': error}
 
