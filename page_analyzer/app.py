@@ -2,13 +2,16 @@ from flask import (Flask,
                    render_template,
                    request,
                    redirect,
-                   url_for
+                   url_for,
+                   flash
                    )
 import os
 from psycopg2 import connect
 import psycopg2.extras
 from dotenv import load_dotenv
 from datetime import datetime
+
+import validators
 from urllib.parse import urlparse
 
 
@@ -25,24 +28,67 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/urls', methods=['GET', 'POST'])
+@app.get('/urls')
 def urls_get():
+    conn = connect(DATABASE_URL)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    q_select = 'SELECT id, name, created_at FROM urls ORDER BY id DESC;'
+    cur.execute(q_select)
 
-    if request.method == 'POST':
-        url = request.form.get('url')
-        parsed_url = urlparse(url)
-        norm_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
+    urls = cur.fetchall()
 
+    cur.close()
+    conn.close()
+
+    return render_template(
+        'urls.html',
+        urls=urls
+    )
+
+
+@app.post('/urls')
+def urls_post():
+
+    url = request.form.get('url')
+    check = validate_url(url)
+    url = check['url']
+    error = check['error']
+
+    if error:
+        if error == 'exists':
+            conn = connect(DATABASE_URL)
+            cur = conn.cursor()
+
+            q_select = 'SELECT id FROM urls WHERE name=(%s)'
+            cur.execute(q_select, [url])
+            id = cur.fetchone()[0]
+
+            cur.close()
+            conn.close()
+
+            flash('Страница уже существует', 'alert-info')
+            return redirect(url_for('url_show', id=id))
+        else:
+            flash('Некорректный URL', 'alert-danger')
+
+            if error == 'zero':
+                flash('URL обязателен', 'alert-danger')
+            elif error == 'length':
+                flash('URL превышает 255 символов', 'alert-danger')
+
+            return render_template('index.html', url=url), 422
+
+    else:
         date = datetime.now().date()
 
         conn = connect(DATABASE_URL)
         cur = conn.cursor()
 
         q_insert = 'INSERT INTO urls (name, created_at) VALUES (%s, %s)'
-        cur.execute(q_insert, (norm_url, date))
+        cur.execute(q_insert, (url, date))
 
         q_select = 'SELECT id FROM urls WHERE name=(%s)'
-        cur.execute(q_select, [norm_url])
+        cur.execute(q_select, [url])
         id = cur.fetchone()[0]
 
         conn.commit()
@@ -50,28 +96,11 @@ def urls_get():
         cur.close()
         conn.close()
 
+        flash('Страница успешно добавлена', 'alert-success')
         return redirect(url_for(
             'url_show',
             id=id
         ))
-
-    else:
-        conn = connect(DATABASE_URL)
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        q_select = 'SELECT id, name, created_at FROM urls ORDER BY id DESC;'
-        cur.execute(q_select)
-
-        urls = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    # return DATABASE_URL
-
-    return render_template(
-        'urls.html',
-        urls=urls
-    )
 
 
 @app.route('/urls/<int:id>')
@@ -90,3 +119,35 @@ def url_show(id):
         id=id,
         url=url
     )
+
+
+def validate_url(url):
+    if len(url) == 0:
+        return {'url': url, 'error': 'zero'}
+    elif len(url) > 255:
+        return {'url': url, 'error': 'length'}
+    elif not validators.url(url):
+        return {'url': url, 'error': 'invalid'}
+    else:
+        parsed_url = urlparse(url)
+        norm_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
+
+        conn = connect(DATABASE_URL)
+        cur = conn.cursor()
+        q_select = 'SELECT id, name FROM urls WHERE name=(%s)'
+        cur.execute(q_select, [norm_url])
+
+        found = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        if found:
+            return {'url': norm_url, 'error': 'exists'}
+        else:
+            return {'url': norm_url, 'error': None}
+
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
