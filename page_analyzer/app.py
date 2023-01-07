@@ -9,9 +9,11 @@ import os
 from psycopg2 import connect
 import psycopg2.extras
 from dotenv import load_dotenv
+
 from datetime import datetime
 
 import validators
+import requests
 from urllib.parse import urlparse
 
 
@@ -41,11 +43,13 @@ def urls_get():
                         urls.id AS id,
                         urls.name AS name,
                         url_checks.created_at AS last_check,
-                    MAX(url_checks.id) AS check_no
+                        url_checks.status_code AS status_code
                     FROM urls
                     LEFT JOIN url_checks ON urls.id = url_checks.url_id
-                    GROUP BY urls.id, url_checks.created_at
-                    ORDER BY urls.id DESC'''
+                    AND url_checks.id = (SELECT MAX(id)
+                                        FROM url_checks
+                                        WHERE url_id = urls.id)
+                    ORDER BY urls.id;'''
         cur.execute(q_select)
         urls = cur.fetchall()
     conn.close()
@@ -117,13 +121,13 @@ def url_show(id_):
 
     conn = connect(DATABASE_URL)
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        q_select = '''SELECT id, name, created_at
+        q_select = '''SELECT *
                     FROM urls
                     WHERE id=(%s)'''
         cur.execute(q_select, [id_])
         url = cur.fetchone()
 
-        q_select = '''SELECT id, created_at
+        q_select = '''SELECT *
                     FROM url_checks
                     WHERE url_id=(%s)
                     ORDER BY id DESC'''
@@ -146,18 +150,38 @@ def url_check(id_):
 
     conn = connect(DATABASE_URL)
     with conn.cursor() as cur:
-        q_insert = '''INSERT
-                    INTO url_checks (url_id, created_at)
-                    VALUES (%s, %s)'''
-        cur.execute(q_insert, (url_id, checked_at))
-        conn.commit()
+        q_select = '''SELECT name
+                    FROM urls
+                    WHERE id=(%s)'''
+        cur.execute(q_select, [url_id])
+        url = cur.fetchone()[0]
     conn.close()
 
-    flash('Страница успешно проверена', 'alert-success')
-    return redirect(url_for(
-        'url_show',
-        id_=id_
-    ))
+    try:
+        r = requests.get(url)
+        status_code = r.status_code
+
+        conn = connect(DATABASE_URL)
+        with conn.cursor() as cur:
+            q_insert = '''INSERT
+                    INTO url_checks (url_id, created_at, status_code)
+                    VALUES (%s, %s, %s)'''
+            cur.execute(q_insert, (url_id, checked_at, status_code))
+            conn.commit()
+        conn.close()
+
+        flash('Страница успешно проверена', 'alert-success')
+        return redirect(url_for(
+            'url_show',
+            id_=id_
+        ))
+
+    except requests.ConnectionError:
+        flash('Произошла ошибка при проверке', 'alert-danger')
+        return redirect(url_for(
+            'url_show',
+            id_=id_
+        ))
 
 
 def validate_url(url):
