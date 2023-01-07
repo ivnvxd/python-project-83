@@ -15,6 +15,7 @@ from datetime import datetime
 import validators
 import requests
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 
 load_dotenv()
@@ -161,12 +162,25 @@ def url_check(id_):
         r = requests.get(url)
         status_code = r.status_code
 
+        soup = BeautifulSoup(r.text, 'html.parser')
+
+        h1_tag = soup.find('h1')
+        title_tag = soup.find('title')
+        description_tag = soup.find('meta', attrs={'name': 'description'})
+
+        h1 = h1_tag.text.strip() if h1_tag else ''
+        title = title_tag.text.strip() if title_tag else ''
+        description = description_tag['content'].strip() \
+            if description_tag else ''
+
         conn = connect(DATABASE_URL)
         with conn.cursor() as cur:
             q_insert = '''INSERT
-                    INTO url_checks (url_id, created_at, status_code)
-                    VALUES (%s, %s, %s)'''
-            cur.execute(q_insert, (url_id, checked_at, status_code))
+                    INTO url_checks(url_id, status_code,
+                    h1, title, description, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s)'''
+            cur.execute(q_insert, (url_id, status_code,
+                                   h1, title, description, checked_at))
             conn.commit()
         conn.close()
 
