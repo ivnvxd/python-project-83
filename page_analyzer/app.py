@@ -3,7 +3,8 @@ from flask import (Flask,
                    request,
                    redirect,
                    url_for,
-                   flash
+                   flash,
+                   get_flashed_messages
                    )
 import os
 from psycopg2 import connect
@@ -33,7 +34,9 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+    )
 
 
 @app.get('/urls')
@@ -55,9 +58,11 @@ def urls_get():
         urls = cur.fetchall()
     conn.close()
 
+    messages = get_flashed_messages(with_categories=True)
     return render_template(
         'urls.html',
-        urls=urls
+        urls=urls,
+        messages=messages
     )
 
 
@@ -81,7 +86,10 @@ def urls_post():
             conn.close()
 
             flash('Страница уже существует', 'alert-info')
-            return redirect(url_for('url_show', id_=id_))
+            return redirect(url_for(
+                'url_show',
+                id_=id_
+            ))
         else:
             flash('Некорректный URL', 'alert-danger')
 
@@ -90,7 +98,12 @@ def urls_post():
             elif error == 'length':
                 flash('URL превышает 255 символов', 'alert-danger')
 
-            return render_template('index.html', url=url), 422
+            messages = get_flashed_messages(with_categories=True)
+            return render_template(
+                'index.html',
+                url=url,
+                messages=messages
+            ), 422
 
     else:
         created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -136,11 +149,13 @@ def url_show(id_):
         checks = cur.fetchall()
     conn.close()
 
+    messages = get_flashed_messages(with_categories=True)
     return render_template(
         'show.html',
         id=id_,
         url=url,
-        checks=checks
+        checks=checks,
+        messages=messages
     )
 
 

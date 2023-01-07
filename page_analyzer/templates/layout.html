@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 
     <head>
         <meta charset="UTF-8">
@@ -28,13 +28,11 @@
             </nav>
         </header>
 
-        {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert {{ category }}" role="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
 
         <main class="flex-grow-1">
             <div class="container-lg mt-3">
