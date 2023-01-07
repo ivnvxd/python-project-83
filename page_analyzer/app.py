@@ -92,7 +92,7 @@ def urls_post():
             return render_template('index.html', url=url), 422
 
     else:
-        created_at = datetime.now().date()
+        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         conn = connect(DATABASE_URL)
         with conn.cursor() as cur:
@@ -145,7 +145,7 @@ def url_show(id_):
 
 @app.post('/urls/<int:id_>/checks')
 def url_check(id_):
-    checked_at = datetime.now().date()
+    checked_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     url_id = id_
 
     conn = connect(DATABASE_URL)
