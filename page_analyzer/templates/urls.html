@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Page Analyzer - Sites
+    Анализатор страниц - Сайты
 {% endblock %}
 
 {% block main %}
@@ -11,9 +11,9 @@
         <tbody>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Last check</th>
-                <th>Response code</th>
+                <th>Имя</th>
+                <th>Последняя проверка</th>
+                <th>Код ответа</th>
             </tr>
             {% if urls %}
                 {% for url in urls %}
