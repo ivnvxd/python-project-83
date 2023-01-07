@@ -21,15 +21,3 @@ selfcheck:
 	poetry check
 
 check: selfcheck test lint
-
-build: check
-	poetry build
-
-package-install:
-	pip install --user --force-reinstall dist/*.whl
-
-package-reinstall:
-	python3 -m pip install --user --force-reinstall dist/*.whl
-
-# publish:
-# 	poetry publish --dry-run
