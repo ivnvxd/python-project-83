@@ -7,6 +7,14 @@ from page_analyzer.db import get_urls_by_name
 
 
 def validate_url(url):
+    """
+    Validation and normalization for the entered URL. The URL must have a valid
+    address, it is mandatory and does not exceed 255 characters.
+
+    :param url: Site URL.
+    :return: Dict of normalized url and errors if any.
+    """
+
     error = None
 
     if len(url) == 0:
@@ -32,6 +40,14 @@ def validate_url(url):
 
 
 def get_url_data(url: str) -> dict:
+    """
+    Request provided URL. Save response code. Parse the page and check the
+    presence of <h1>, <title> and <meta name="description" content="...">
+    tags on the page.
+
+    :param url: Site URL.
+    :return: Dict of parsed and found data.
+    """
     check = {}
 
     r = requests.get(url)

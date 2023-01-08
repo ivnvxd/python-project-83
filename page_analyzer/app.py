@@ -30,6 +30,12 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 @app.errorhandler(404)
 def page_not_found(error):
+    """
+    Render 404 error page if the requested page is missing.
+
+    :return: Render 404 error page.
+    """
+
     return render_template(
         '404.html'
     ), 404
@@ -37,6 +43,12 @@ def page_not_found(error):
 
 @app.route('/')
 def index():
+    """
+    Render index page.
+
+    :return: Render index page.
+    """
+
     return render_template(
         'index.html',
     )
@@ -44,6 +56,11 @@ def index():
 
 @app.get('/urls')
 def urls_get():
+    """
+    Render all added URLs page with last check dates and status codes if any.
+
+    :return: Render all URLs page.
+    """
 
     urls = get_all_urls()
 
@@ -57,6 +74,13 @@ def urls_get():
 
 @app.post('/urls')
 def urls_post():
+    """
+    Add new URL. Check if there is one provided. Validate the URL.
+    Add it to db if this URL isn't already there. Raise an error if any occurs.
+
+    :return: Redirect to one URL page if new URL added or it is already in db.
+    Render index page with flash error if any.
+    """
 
     url = request.form.get('url')
     check = validate_url(url)
@@ -67,7 +91,7 @@ def urls_post():
     if error:
         if error == 'exists':
 
-            id_ = get_urls_by_name(url)[0]['id']
+            id_ = get_urls_by_name(url)['id']
 
             flash('Страница уже существует', 'alert-info')
             return redirect(url_for(
@@ -97,7 +121,7 @@ def urls_post():
 
         add_site(site)
 
-        id_ = get_urls_by_name(url)[0]['id']
+        id_ = get_urls_by_name(url)['id']
 
         flash('Страница успешно добавлена', 'alert-success')
         return redirect(url_for(
@@ -108,9 +132,15 @@ def urls_post():
 
 @app.route('/urls/<int:id_>')
 def url_show(id_):
+    """
+    Render one URL page containing its parsed check data.
+
+    :param id_: URL id.
+    :return: Render page or raise 404 error.
+    """
 
     try:
-        url = get_urls_by_id(id_)[0]
+        url = get_urls_by_id(id_)
         checks = get_checks_by_id(id_)
 
         messages = get_flashed_messages(with_categories=True)
@@ -128,11 +158,23 @@ def url_show(id_):
 
 @app.post('/urls/<int:id_>/checks')
 def url_check(id_):
+    """
+    Check requested URL. Add data to db or raise error.
 
-    url = get_urls_by_id(id_)[0]['name']
+    :param id_: URL id.
+    :return: Redirect to one URL show page adding check data to db or returning
+    error if an error occured during check.
+    """
+
+    url = get_urls_by_id(id_)['name']
 
     try:
         check = get_url_data(url)
+
+        # TODO: try to pass check
+        # if check['status_code'] != 200:
+        #     raise ConnectionError
+        # TODO: try RequestException
 
         check['url_id'] = id_
         check['checked_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -145,7 +187,8 @@ def url_check(id_):
             id_=id_
         ))
 
-    except requests.ConnectionError:
+    # except requests.ConnectionError:
+    except requests.RequestException:
         flash('Произошла ошибка при проверке', 'alert-danger')
         return redirect(url_for(
             'url_show',
