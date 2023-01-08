@@ -29,10 +29,9 @@ Analyze specified pages for SEO suitability
   * [Built With](#built-with)
 * [Installation](#installation)
   * [Prerequisites](#prerequisites)
-  * [Package](#package)
+  * [Application](#application)
 * [Usage](#usage)
 * [Demo](#demo)
-  *
 * [Additionally](#additionally)
   * [Dependencies](#dependencies)
   * [Dev Dependencies](#dev-dependencies)
@@ -43,29 +42,35 @@ Analyze specified pages for SEO suitability
 
 ## About
 
-Page Analyzer is a full-featured application based on the Flask framework that analyzes specified pages for SEO suitability.
+Page Analyzer is a full-featured application based on the Flask framework that analyzes specified pages for SEO suitability. 
 
-### Features:
+Here the basic principles of building modern websites on the MVC architecture are used: working with routing, query handlers and templating, interaction with the database.
 
-* [X] 
-* [X] 
-* [X] 
+In this project the Bootstrap 5 framework along with Jinja2 template engine are used. The frontend is rendered on the backend. This means that the page is built by the Jinja2 backend, which returns prepared HTML. And this HTML is rendered by the server.
+
+PostgreSQL is used as the object-relational database system with Psycopg library to work with PostgreSQL directly from Python.
+
+### Features
+
+* [X] Validate, normalize and add new URL to the database;
+* [X] Check the site for its availability;
+* [X] Query the desired site, collect information about it and add it to the database;
+* [X] Display all added URLs;
+* [X] Display the specific entered URL on a separate page with obtained information;
 
 ### Built With
 
-* Python
-* Flask
-* Bootstrap 5
-* PostgreSQL
-
-
-* Beautiful Soup 4
-* Jinja 2
-* Psycopg 2
-* gunicorn
-* Poetry
-* Pytest
-* flake8
+* [Python](https://www.python.org/)
+* [Flask](https://flask.palletsprojects.com/en/2.2.x/)
+* [Bootstrap 5](https://getbootstrap.com/)
+* [PostgreSQL](https://www.postgresql.org/)
+* [Beautiful Soup 4](https://www.crummy.com/software/BeautifulSoup/)
+* [Jinja 2](https://palletsprojects.com/p/jinja/)
+* [Psycopg 2](https://www.psycopg.org/)
+* [Gunicorn](https://gunicorn.org/)
+* [Poetry](https://python-poetry.org/)
+* [pytest](https://docs.pytest.org/en/7.2.x/)
+* [Flake8](https://flake8.pycqa.org/en/latest/)
 
 ---
 
@@ -86,31 +91,65 @@ Python 3.8+
 
 The project uses the Poetry dependency manager. To install Poetry use its [official instruction](https://python-poetry.org/docs/#installation).
 
-### Package
+#### PostgreSQL
 
-To use the package, you need to clone the repository to your computer. This is done using the ```git clone``` command. Clone the project:
-
-```bash
->> git clone https://github.com/ivnvxd/python-project-83.git
+As database the PostgreSQL database system is being used. You need to install it first. You can download the ready-to-use package from [official website](https://www.postgresql.org/download/) or use Homebrew:
+```shell
+>> brew install postgresql
 ```
 
-Then you have to build the package and install it:
+### Application
+
+To use the application, you need to clone the repository to your computer. This is done using the `git clone` command. Clone the project:
 
 ```bash
->> cd python-project-83
+>> git clone https://github.com/ivnvxd/python-project-83.git && cd python-project-83
 ```
 
+Then you have to install all necessary dependencies:
+
+```bash
+>> make install
+```
+
+Create .env file in the root folder and add following variables:
+```
+DATABASE_URL = postgresql://{provider}://{user}:{password}@{host}:{port}/{db}
+SECRET_KEY = '{your secret key}'
+```
+Run commands from `database.sql` to create the required tables.
 
 ---
 
 ## Usage
 
+Start the gunicorn Flask server by running:
+```bash
+make start
+```
+By default, the server will be available at http://0.0.0.0:8000. 
+
+_It is also possible to start it local in development mode with debugger active using:_
+```bash
+make dev
+```
+_The dev server will be at http://127.0.0.1:5000._
+
+
+To add a new site, enter its address into the form on the home page. The specified address will be validated and then added to the database.
+
+After the site is added, you can start checking it. A button appears on the page of a particular site, and clicking on it creates an entry in the validation table.
+
+You can see all added URLs on the `/urls` page.
+
 ---
 
 ## Demo
 
-[Demo](https://python-project-83-production-c5d0.up.railway.app/)
+The demo version is available on Railway platform:
+[https://python-project-83-production-c5d0.up.railway.app/](https://python-project-83-production-c5d0.up.railway.app/)
 
+[//]: # (<img src="" alt="logo" width="300" height="auto" />)
 
 ---
 
@@ -163,6 +202,7 @@ Then you have to build the package and install it:
 ├── page_analyzer
 │   ├── __init__.py
 │   ├── app.py
+│   ├── checks.py
 │   ├── db.py
 │   └── templates
 │       ├── 404.html
@@ -175,7 +215,6 @@ Then you have to build the package and install it:
 ├── setup.cfg
 └── tests
     ├── __init__.py
-    ├── __pycache__
     └── test_app.py
 ```
 
