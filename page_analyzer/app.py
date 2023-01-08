@@ -177,12 +177,7 @@ def url_check(id_):
         add_check(check)
 
         flash('Страница успешно проверена', 'alert-success')
-        # return redirect(url_for(
-        #     'url_show',
-        #     id_=id_
-        # ))
 
-    # except requests.ConnectionError:
     except requests.RequestException:
         flash('Произошла ошибка при проверке', 'alert-danger')
 

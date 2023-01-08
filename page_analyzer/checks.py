@@ -48,15 +48,13 @@ def get_url_data(url: str) -> dict:
     :param url: Site URL.
     :return: Dict of parsed and found data.
     """
-    check = {}
 
     r = requests.get(url)
 
-    # TODO: try to pass check
     if r.status_code != 200:
         raise requests.RequestException
 
-    check['status_code'] = r.status_code
+    check = {'status_code': r.status_code}
 
     soup = BeautifulSoup(r.text, 'html.parser')
 
