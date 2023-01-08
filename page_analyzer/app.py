@@ -174,7 +174,6 @@ def url_check(id_):
         # TODO: try to pass check
         # if check['status_code'] != 200:
         #     raise ConnectionError
-        # TODO: try RequestException
 
         check['url_id'] = id_
         check['checked_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -182,18 +181,19 @@ def url_check(id_):
         add_check(check)
 
         flash('Страница успешно проверена', 'alert-success')
-        return redirect(url_for(
-            'url_show',
-            id_=id_
-        ))
+        # return redirect(url_for(
+        #     'url_show',
+        #     id_=id_
+        # ))
 
     # except requests.ConnectionError:
     except requests.RequestException:
         flash('Произошла ошибка при проверке', 'alert-danger')
-        return redirect(url_for(
-            'url_show',
-            id_=id_
-        ))
+
+    return redirect(url_for(
+        'url_show',
+        id_=id_
+    ))
 
 
 if __name__ == '__main__':
