@@ -42,19 +42,19 @@
                 <th>description</th>
                 <th>Дата создания</th>
             </tr>
+
+            {% for check in checks %}
+            <tr>
+                <td>{{check.id}}</td>
+                <td>{{check.status_code}}</td>
+                <td>{{check.h1}}</td>
+                <td>{{check.title}}</td>
+                <td>{{check.description}}</td>
+                <td>{{check.created_at}}</td>
+            </tr>
+            {% endfor %}
+
         </tbody>
-
-        {% for check in checks %}
-        <tr>
-            <td>{{check.id}}</td>
-            <td>{{check.status_code}}</td>
-            <td>{{check.h1}}</td>
-            <td>{{check.title}}</td>
-            <td>{{check.description}}</td>
-            <td>{{check.created_at}}</td>
-        </tr>
-        {% endfor %}
-
     </table>
 </div>
 {% endblock %}
