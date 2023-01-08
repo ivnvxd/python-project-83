@@ -51,6 +51,11 @@ def get_url_data(url: str) -> dict:
     check = {}
 
     r = requests.get(url)
+
+    # TODO: try to pass check
+    if r.status_code != 200:
+        raise requests.RequestException
+
     check['status_code'] = r.status_code
 
     soup = BeautifulSoup(r.text, 'html.parser')

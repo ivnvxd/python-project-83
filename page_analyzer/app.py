@@ -171,10 +171,6 @@ def url_check(id_):
     try:
         check = get_url_data(url)
 
-        # TODO: try to pass check
-        # if check['status_code'] != 200:
-        #     raise ConnectionError
-
         check['url_id'] = id_
         check['checked_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
