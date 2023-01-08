@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from psycopg2 import connect
-import psycopg2.extras
+from psycopg2.extras import RealDictCursor
 
 
 load_dotenv()
@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 def get_all_urls() -> dict:
     conn = connect(DATABASE_URL)
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         q_select = '''SELECT DISTINCT ON (urls.id)
                         urls.id AS id,
                         urls.name AS name,
@@ -22,7 +22,7 @@ def get_all_urls() -> dict:
                     AND url_checks.id = (SELECT MAX(id)
                                         FROM url_checks
                                         WHERE url_id = urls.id)
-                    ORDER BY urls.id;'''
+                    ORDER BY urls.id DESC;'''
         cur.execute(q_select)
         urls = cur.fetchall()
     conn.close()
@@ -32,7 +32,7 @@ def get_all_urls() -> dict:
 
 def get_urls_by_id(id_: int) -> dict:
     conn = connect(DATABASE_URL)
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         q_select = '''SELECT *
                     FROM urls
                     WHERE id=(%s)'''
@@ -45,7 +45,7 @@ def get_urls_by_id(id_: int) -> dict:
 
 def get_urls_by_name(name: str) -> dict:
     conn = connect(DATABASE_URL)
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         q_select = '''SELECT *
                     FROM urls
                     WHERE name=(%s)'''
@@ -58,7 +58,7 @@ def get_urls_by_name(name: str) -> dict:
 
 def get_checks_by_id(id_: int) -> dict:
     conn = connect(DATABASE_URL)
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
         q_select = '''SELECT *
                     FROM url_checks
                     WHERE url_id=(%s)

@@ -20,8 +20,8 @@
                 <tr>
                     <td>{{ url.id }}</td>
                     <td><a href="{{ url_for('url_show', id_=url.id) }}">{{ url.name }}</a></td>
-                    <td>{{ url.last_check }}</td>
-                    <td>{{ url.status_code }}</td>
+                    <td>{{ url.last_check if url.last_check is not none }}</td>
+                    <td>{{ url.status_code if url.status_code is not none }}</td>
                 </tr>
                 {% endfor %}
             {% endif %}

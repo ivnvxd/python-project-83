@@ -28,9 +28,11 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 
 
-# @app.errorhandler(404)
-# def page_not_found():
-#     return render_template('404.html'), 404
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template(
+        '404.html'
+    ), 404
 
 
 @app.route('/')
@@ -107,16 +109,21 @@ def urls_post():
 @app.route('/urls/<int:id_>')
 def url_show(id_):
 
-    url = get_urls_by_id(id_)[0]
-    checks = get_checks_by_id(id_)
+    try:
+        url = get_urls_by_id(id_)[0]
+        checks = get_checks_by_id(id_)
 
-    messages = get_flashed_messages(with_categories=True)
-    return render_template(
-        'show.html',
-        url=url,
-        checks=checks,
-        messages=messages
-    )
+        messages = get_flashed_messages(with_categories=True)
+        return render_template(
+            'show.html',
+            url=url,
+            checks=checks,
+            messages=messages
+        )
+    except IndexError:
+        return render_template(
+            '404.html'
+        ), 404
 
 
 @app.post('/urls/<int:id_>/checks')
