@@ -17,7 +17,7 @@ def site():
 @pytest.fixture()
 def check():
     checks = {}
-    checks['right'] = 'https://www.google.com/'
+    checks['right'] = 'https://www.facebook.com/'
     checks['wrong'] = 'http://wrong.com'
 
     return checks
@@ -34,7 +34,7 @@ def test_validation_errors(site):
 
 def test_check(check):
     right = get_url_data(check['right'])
-    assert right == {'description': '', 'h1': '', 'status_code': 200, 'title': 'Google'}
+    assert right == {'description': 'Log into Facebook to start sharing and connecting with your friends, family, and people you know.', 'h1': '', 'status_code': 200, 'title': 'Facebook - log in or sign up'}
 
     with pytest.raises(RequestException):
         get_url_data(check['wrong'])
