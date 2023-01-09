@@ -149,7 +149,7 @@ You can see all added URLs on the `/urls` page.
 The demo version is available on Railway platform:
 [https://python-project-83-production-c5d0.up.railway.app/](https://python-project-83-production-c5d0.up.railway.app/)
 
-[//]: # (<img src="" alt="logo" width="300" height="auto" />)
+<img src="https://raw.githubusercontent.com/ivnvxd/ivnvxd/master/img/page_analyzer_demo.gif" alt="demo" height="auto" />
 
 ---
 
@@ -215,7 +215,8 @@ The demo version is available on Railway platform:
 ├── setup.cfg
 └── tests
     ├── __init__.py
-    └── test_app.py
+    ├── test_app.py
+    └── test_checks.py
 ```
 
 </details>
