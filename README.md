@@ -50,6 +50,8 @@ In this project the Bootstrap 5 framework along with Jinja2 template engine are 
 
 PostgreSQL is used as the object-relational database system with Psycopg library to work with PostgreSQL directly from Python.
 
+[Demo](https://python-page-analyzer.up.railway.app/)
+
 ### Features
 
 * [X] Validate, normalize and add new URL to the database;
@@ -147,7 +149,7 @@ You can see all added URLs on the `/urls` page.
 ## Demo
 
 The demo version is available on Railway platform:
-[https://python-project-83-production-c5d0.up.railway.app/](https://python-project-83-production-c5d0.up.railway.app/)
+[https://python-page-analyzer.up.railway.app/](https://python-page-analyzer.up.railway.app/)
 
 <img src="https://raw.githubusercontent.com/ivnvxd/ivnvxd/master/img/page_analyzer_demo.gif" alt="demo" height="auto" />
 
